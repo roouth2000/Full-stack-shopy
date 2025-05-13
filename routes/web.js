@@ -3,7 +3,7 @@ import {
   registerUser,
   registerUserpost,
   verifyUser,
-  loginUsercls
+  loginUser
 } from "../Controllers/AuthController.js";
 import { UserProfile } from "../Controllers/ProfileController.js";
 import isAuth from "../middleware/isAuth.js";
