@@ -3,11 +3,37 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import sendMail from "../middleware/sendMail.js";
 
+const validatePassword = (password) => {
+  const minLength = 8;
+  const hasLetter = /[a-z]/.test(password);
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  if (password.length < minLength) {
+    return "Password must be at least 8 characters long";
+  }
+  if (!hasLetter) {
+    return "Password must contain at least one lowercase letter";
+  }
+  if (!hasUpperCase) {
+    return "Password must contain at least one uppercase letter";
+  }
+  if (!hasNumber) {
+    return "Password must contain at least one number";
+  }
+  if (!hasSpecial) {
+    return "Password must contain at least one special character";
+  }
+
+  return null;
+};
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
 
-    let user = await User.findOne({ email }); // Corrected method name to findOne (case-sensitive)
+    let user = await User.findOne({ email });
 
     if (user) {
       return res.status(400).json({
@@ -15,13 +41,18 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10); // Use a higher salt rounds value for better security.
+    const errorMessage = validatePassword(password);
+    if (errorMessage) {
+      return res.status(400).json({ message: errorMessage });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const otp = Math.floor(Math.random() * 1000000);
-    //create new user data
+
     user = { name, email, hashedPassword, contact };
-    // Create signed activation token
+
     const activationToken = jwt.sign(
-      { user, otp }, // Include email instead of user object for clarity.
+      { user, otp },
       process.env.ACTIVATION_TOKEN_SECRET,
       { expiresIn: "5m" }
     );
@@ -29,7 +60,6 @@ export const registerUser = async (req, res) => {
     const message = `Please Verify Your Account ${otp}`;
     const subject = "Welcome to Our Service";
 
-    // Send Email to User
     await sendMail(email, subject, message);
 
     return res.status(200).json({
@@ -37,12 +67,13 @@ export const registerUser = async (req, res) => {
       activationToken,
     });
   } catch (error) {
-    console.error(error); // Log error for debugging purposes.
+    console.error(error);
     return res.status(500).json({
       message: error.message,
     });
   }
 };
+
 export const registerUserpost = async (req, res) => {
   return res.send("<h1>Hello Roopan</h1>");
 };
