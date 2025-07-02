@@ -4,7 +4,7 @@ import upload from "../middleware/upload.js";
 import { registerUser, registerUserpost, verifyUser, loginUser } from "../Controllers/AuthController.js";
 import { UserProfile } from "../Controllers/ProfileController.js";
 import { createProduct, getAllProducts, getSingleProduct, updateProduct, deleteProduct } from "../Controllers/ProductController.js";
-import { createCategory, getAllCategories, getSingleCategory, updateCategory, deleteCategory } from "../Controllers/CategoryController.js";
+import { createCategory, getCategories, getCategory, updateCategory, deleteCategory } from "../Controllers/CategoryController.js";
 import { createVendor, getAllVendors, getVendor, updateVendor, deleteVendor } from "../Controllers/vendorController.js";
 import { createInvoice, getAllInvoices, getInvoiceById, filterInvoices, deleteInvoice } from "../Controllers/invoiceController.js";
 import { createPurchase, getAllPurchases, getPurchaseById, deletePurchase } from "../Controllers/purchaseController.js";
@@ -29,8 +29,8 @@ router.delete("/products/:id", deleteProduct);
 
 // Category
 router.post("/categories", upload.single("image"), createCategory);
-router.get("/categories", getAllCategories);
-router.get("/categories/:id", getSingleCategory);
+router.get("/categories", getCategories);
+router.get("/categories/:id", getCategory);
 router.put("/categories/:id", upload.single("image"), updateCategory);
 router.delete("/categories/:id", deleteCategory);
 
