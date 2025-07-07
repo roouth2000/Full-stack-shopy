@@ -1,6 +1,7 @@
 import express from "express";
 import isAuth from "../middleware/isAuth.js";
 import upload from "../middleware/upload.js";
+// import upload from "../middleware/dynamicUpload.js";
 import { registerUser, registerUserpost, verifyUser, loginUser } from "../Controllers/AuthController.js";
 import { UserProfile } from "../Controllers/ProfileController.js";
 import { createProduct, getAllProducts, getSingleProduct, updateProduct, deleteProduct } from "../Controllers/ProductController.js";
@@ -28,9 +29,9 @@ router.put("/products/:id", upload.single("image"), updateProduct);
 router.delete("/products/:id", deleteProduct);
 
 // Category
-router.post("/categories", upload.single("image"), createCategory);
-router.get("/categories", getCategories);
-router.get("/categories/:id", getCategory);
+router.post("/create/category", upload.single("image"), createCategory);
+router.get("/categories/getcategories", getCategories);
+router.get("/categories/getsinglecategories/:id", getCategory);
 router.put("/categories/:id", upload.single("image"), updateCategory);
 router.delete("/categories/:id", deleteCategory);
 
