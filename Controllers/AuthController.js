@@ -31,7 +31,7 @@ const validatePassword = (password) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, contact } = req.body;
+    const { name, username, email, password, contact } = req.body;
 
     let user = await User.findOne({ email });
 
@@ -49,7 +49,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = Math.floor(Math.random() * 1000000);
 
-    user = { name, email, hashedPassword, contact };
+    user = { name, username, email, hashedPassword, contact };
 
     const activationToken = jwt.sign(
       { user, otp },
@@ -93,6 +93,7 @@ export const verifyUser = async (req, res) => {
 
     await User.create({
       name: verify.user.name,
+      username: verify.user.username,
       email: verify.user.email,
       password: verify.user.hashedPassword,
       contact: verify.user.contact,
@@ -111,9 +112,9 @@ export const verifyUser = async (req, res) => {
 //login user
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    let user = await User.findOne({ email }); // Corrected method name to findOne (case-sensitive)
+    let user = await User.findOne({ username }); // Corrected method name to findOne (case-sensitive)
 
     if (!user) {
       return res.status(400).json({
